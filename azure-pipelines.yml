@@ -2,22 +2,30 @@ trigger:
 - main
 
 pool:
-  name: Default   
+  name: Default   # your self-hosted agent
 
 variables:
   dockerRegistryServiceConnection: 'dockerhub-sc'
   imageRepository: 'kanishkasingh14/myapp'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
 
 steps:
+
+- checkout: self
+
+- script: |
+    echo "Listing source directory"
+    ls -la $(Build.SourcesDirectory)
+  displayName: Verify Files
+
 - task: Docker@2
-  displayName: Build and Push
+  displayName: Build and Push Docker Image
   inputs:
     command: buildAndPush
     containerRegistry: $(dockerRegistryServiceConnection)
     repository: $(imageRepository)
-    Dockerfile: $(dockerfilePath)
+    Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+    buildContext: '$(Build.SourcesDirectory)'
     tags: |
       $(tag)
       latest
