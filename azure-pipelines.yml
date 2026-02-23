@@ -9,17 +9,8 @@ variables:
   imageRepository: 'kanishkasingh14/myapp'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
-  DOCKER_BUILDKIT: 1
 
 steps:
-
-- script: |
-    docker version
-    docker buildx version || true
-    docker buildx create --use || true
-    docker buildx inspect --bootstrap
-  displayName: 'Initialize Docker Buildx'
-
 - task: Docker@2
   displayName: Build and Push
   inputs:
