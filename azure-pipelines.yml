@@ -2,40 +2,6 @@ trigger:
 - main
 
 pool:
-  name: Default
-
-variables:
-  dockerRegistryServiceConnection: 'dockerhub-sc'
-  imageRepository: 'kanishkasingh14/myapp'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
-  DOCKER_BUILDKIT: 1
-
-steps:
-
-- script: |
-    docker version
-    docker buildx version || true
-    docker buildx create --use || true
-    docker buildx inspect --bootstrap
-  displayName: 'Initialize Docker Buildx'
-
-variables:
-  DOCKER_BUILDKIT: 1
-steps:
-- task: Docker@2
-  displayName: Build and Push
-  inputs:
-    command: buildAndPush
-    containerRegistry: dockerhub-sc
-    repository: yourusername/myapp
-    Dockerfile: $(Build.SourcesDirectory)/Dockerfile
-    tags: |
-      $(Build.BuildId)
-      latesttrigger:
-- main
-
-pool:
   name: Default   
 
 variables:
