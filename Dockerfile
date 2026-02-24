@@ -1,17 +1,11 @@
-# ---------- Stage 1 : Build ----------
-FROM --platform=linux/amd64 maven:3.9.6-eclipse-temurin-17 AS build
+FROM maven:3.8.2-jdk-8-slim AS build
+WORKDIR /home/app
+COPY. /home/app
+RUN mvn -f/home/app/pom.xml clean package
 
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
-
-
-# ---------- Stage 2 : Run ----------
-FROM --platform=linux/amd64 eclipse-temurin:17-jdk-alpine
-
-WORKDIR /app
+FROM eclipse-temurin:8-jdk-alpine
+VOLUME /tmp
 EXPOSE 8000
 
-COPY --from=build /app/target/*.jar app.jar
-
-ENTRYPOINT ["java","-jar","app.jar"]
+COPY --from=build /home/app/target/*.jar app.jar
+ENTRYPOINT ['sh",'-c","java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar")
